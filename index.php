@@ -31,6 +31,7 @@ try {
 
 } catch (Exception $e) {
     (new TelegramSender())->perform(json_encode($e->getMessage()));
+    error_log($e->getMessage(), 3, __DIR__ . '/logs/error.log');
 }
 
 
