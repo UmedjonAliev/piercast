@@ -22,7 +22,7 @@ use App\AvailableDate;
 use App\TelegramSender;
 
 try {
-    if (isActiveSession(__DIR__ . '/cookies.txt')) {
+    if (isActiveSession(__DIR__ . '/app/cookies.txt')) {
         (new AvailableDate())->perform();
         return;
     }
