@@ -41,7 +41,7 @@ class AvailableDate
             $result = $response->getBody()->getContents();
 
             if (json_decode($result) != "Šobrīd visi pieejamie laiki ir aizņemti") {
-                $msg = "⚠️ Найдены доступные даты! \n
+                $msg = "✅ НАЙДЕНЫ ДОСТУПНЫЕ ДАТЫ! \n
                     URL: $url \n
                     Ответ: " . json_encode($result);
 
