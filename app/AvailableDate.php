@@ -8,11 +8,11 @@ use GuzzleHttp\Client;
 
 class AvailableDate
 {
-    public function perform()
+    public function perform(): void
     {
         $dates = [
-            'year=2025&month=9',
             'year=2025&month=10',
+            'year=2025&month=11',
         ];
 
         $cookieFile = __DIR__ . '/cookies.txt';

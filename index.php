@@ -30,6 +30,16 @@ try {
     (new AvailableDate())->perform();
 
 } catch (Exception $e) {
+
+    if ($e->getCode() == 404) {
+        (new TelegramSender())->perform(
+            "⚠️ Ошибка токена. Перезапуск..." .
+            "\n" .
+            'message: ' . json_encode($e->getMessage())
+        );
+        // обновляем куки
+        (new AuthCookies())->perform();
+    }
     (new TelegramSender())->perform(json_encode($e->getMessage()));
     error_log($e->getMessage(), 3, __DIR__ . '/logs/error.log');
 }
