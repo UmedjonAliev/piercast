@@ -45,7 +45,7 @@ class AvailableDate
 
             try {
                 $response = $client->get($url);
-            } catch (ServerException|ConnectException$e) {
+            } catch (ServerException|ConnectException $e) {
                 setErrorLog('AvailableDate', $e->getMessage());
                 sleep(1);
                 goto retry;
