@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
 
 class AvailableDate
 {
@@ -35,17 +37,41 @@ class AvailableDate
                 'Cookie' => $cookieHeader,
             ]
         ]);
+
         foreach ($dates as $date) {
             $url = "/ru/calendar/available-month-dates?$date";
-            $response = $client->get($url);
+
+            retry:
+
+            try {
+                $response = $client->get($url);
+            } catch (ServerException|ConnectException$e) {
+                setErrorLog('AvailableDate', $e->getMessage());
+                sleep(1);
+                goto retry;
+            }
             $result = $response->getBody()->getContents();
 
-            if (json_decode($result) != "Šobrīd visi pieejamie laiki ir aizņemti") {
+            $decode = json_decode($result);
+
+            if ($decode != "Šobrīd visi pieejamie laiki ir aizņemti") {
                 $msg = "✅ НАЙДЕНЫ ДОСТУПНЫЕ ДАТЫ! \n
                     URL: $url \n
                     Ответ: " . json_encode($result);
 
                 (new TelegramSender())->perform($msg);
+
+                // переход на дату
+                if ($response->getStatusCode() < 400) {
+                    foreach ($decode as $value) {
+                        $date = '/ru/calendar/available-time-slots?date=' . $value;
+                        $response = $client->get($date);
+                        $times = $response->getBody()->getContents();
+
+                        (new TelegramSender())->perform('дата: /ru/calendar/available-time-slots?date=' . $value);
+                        (new TelegramSender())->perform(json_encode($times));
+                    }
+                }
             }
         }
     }

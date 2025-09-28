@@ -31,15 +31,17 @@ try {
 
 } catch (Exception $e) {
 
-    if ($e->getCode() == 404) {
-        (new TelegramSender())->perform(
-            "⚠️ Ошибка токена. Перезапуск..." .
-            "\n" .
-            'message: ' . json_encode($e->getMessage())
-        );
+    if ($e->getCode() >= 400 && $e->getCode() < 490) {
+        setErrorLog('index.php 400 - 490', $e->getMessage());
+//        (new TelegramSender())->perform(
+//            "⚠️ Ошибка токена. Перезапуск..." .
+//            "\n" .
+//            'message: ' . json_encode($e->getMessage())
+//        );
         // обновляем куки
         (new AuthCookies())->perform();
+        (new AvailableDate())->perform();
     }
-    (new TelegramSender())->perform(json_encode($e->getMessage()));
-    error_log($e->getMessage(), 3, __DIR__ . '/logs/error.log');
+//    (new TelegramSender())->perform(json_encode($e->getMessage()));
+    setErrorLog('index.php', $e->getMessage());
 }

@@ -2,7 +2,6 @@
 
 use GuzzleHttp\Cookie\CookieJar;
 
-
 function getCookieValue(CookieJar $jar, string $name): ?string
 {
     foreach ($jar->toArray() as $cookie) {
@@ -48,4 +47,15 @@ function isActiveSession($file): bool
         }
     }
     return false;
+}
+
+function getProjectDir()
+{
+    return realpath(__DIR__);
+}
+
+function setErrorLog($class,$message)
+{
+    $logMessage = "[" . date('Y-m-d H:i:s') . "] SERVER ERROR $class: " . $message . PHP_EOL;
+    error_log($logMessage, 3, getProjectDir() . '/logs/error.log');
 }
